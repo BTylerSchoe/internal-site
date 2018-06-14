@@ -1,14 +1,9 @@
-var moment              = require('moment');
-var mongoose            = require('mongoose');
-const user              = require('./../models/user');
-const bcrypt 			      = require('bcrypt');
-const bcrypt_p 			    = require('bcrypt-promise');
-const jwt           	  = require('jsonwebtoken');
-const validate          = require('mongoose-validator');
+const mongoose            = require('mongoose');
+const member              = require('./../models/member');
+//const technology = require('./../models/technology');
 
-var Schema = mongoose.Schema;
 
-var ProjectSchema = new Schema(
+let ProjectSchema = mongoose.Schema(
   {
     title: {type: String, required: true},
     category: {type: String, required: true},
@@ -16,9 +11,9 @@ var ProjectSchema = new Schema(
     technology: {type: Schema.ObjectId, ref: 'Technology'},
     start_date: {type: Date,},
     end_date: {type: Date},
-  }
-);
+  }, {timestamps: true});
 
+// shows the project leader will need to search based off of account_type??
 ProjectSchema.virtual('Project Leader', {
   ref: 'Member',
   localField: '_id',
@@ -26,11 +21,6 @@ ProjectSchema.virtual('Project Leader', {
   justOne: false,
 });
 
-
-ProjectSchema.methods.getJWT = function(){
-  let expiration_time = parseInt(CONFIG.jwt_expiration);
-  return "Bearer "+jwt.sign({id:this._id}, CONFIG.jwt_encryption, {expiresIn: expiration_time});
-};
 
 ProjectSchema.methods.toWeb = function(){
   let json = this.toJSON();

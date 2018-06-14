@@ -1,28 +1,27 @@
-var moment           = require('moment');
 const mongoose       = require('mongoose');
 const bcrypt 			   = require('bcrypt');
 const bcrypt_p 		 	 = require('bcrypt-promise');
 const jwt            = require('jsonwebtoken');
 const validate       = require('mongoose-validator');
+const Project        = require('./project');
 
-var Schema = mongoose.Schema;
+
 
 const enumAccountType = ['a', 'r', 'i'];
 
-var MemberSchema = new Schema(
-  {
+let MemberSchema = mongoose.Schema({
     first_name: {type: String, required: true, max: 25},
     last_name: {type: String, required: true, max: 30},
     email: {type:String, lowercase:true, trim: true, index: true, unique: true, sparse: true,
       validate:[validate({
           validator: 'isEmail',
           message: 'Not a valid email.',
-      }),]
+      })]
 },
     password: {type: String, required: true, max: 25},
     account_type: {type: String, enum: enumAccountType, required: true},
-  }
-);
+
+  }, {timestamps: true});
 
 
 // virtual field for full name 
@@ -39,13 +38,13 @@ MemberSchema.virtual('full_name').get(function () { //now you can treat as if th
     return this.first_name + ' ' + this.last_name;
 });
 
-// Virtual for Member's URL
-MemberSchema
-.virtual('url')
-.get(function () {
-  return '/member/list' + this._id;
-});
 
+MemberSchema.virtual('projects', {
+  ref: 'Project',
+  localField: '_id',
+  foreignField: 'members.member',
+  justOne: false,
+});
 
 MemberSchema.pre('save', async function(next){
 
@@ -75,6 +74,15 @@ MemberSchema.methods.comparePassword = async function(pw){
   if(!pass) TE('invalid password');
 
   return this;
+}
+
+MemberSchema.methods.Projects = async function(){
+  let err, projects;
+  [err, projects] = await to(Project.find({'members.member':this._id}));
+  if(err) TE('err getting projects');
+  console.log("Projects")
+  console.log(projects)
+  return projects;
 }
 
 MemberSchema.methods.getJWT = function(){

@@ -3,24 +3,29 @@ const validator = require('validator');
 
 const create = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
-    let err, project;
-    let user = req.user;
+    const body = req.body;
+    if(!body.unique_key && ! body.title){
+        return ReE(res, 'Please enter a title to create a project');
+    } else if(!body.category){
+        return ReE(res, 'Please enter a category to create a project');
+    }else{
+        let err, member;
 
-    let project_info = req.body;
-    project_info.users = [{user:user._id}];
+        [err, member] = await to(authService.createProject(body));
 
-    [err, project] = await to(Project.create(project_info));
-    if(err) return ReE(res, err, 422);
-
-    return ReS(res,{project:project.toWeb()}, 201);
+        if(err) return ReE(res, err, 422);
+        return ReS(res, {message:'Successfully created a new project.', member:member.toWeb(), token:member.getJWT()}, 201);
+    }
 }
 module.exports.create = create;
 
+// Jesus loves Brayden
+
 const getAll = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
-    let user = req.user;
+    let member = req.member;
     let err, projects;
-    [err, projects] = await to(user.Projects());
+    [err, projects] = await to(member.Projects());
 
     let projects_json = []
     for (let i in projects){
@@ -31,12 +36,16 @@ const getAll = async function(req, res){
 }
 module.exports.getAll = getAll;
 
+
+
 const get = function(req, res){
     res.setHeader('Content-Type', 'application/json');
     let project = req.project;
     return ReS(res, {project:project.toWeb()});
 }
 module.exports.get = get;
+
+
 
 const update = async function(req, res){
     let err, project, data;
@@ -52,6 +61,8 @@ const update = async function(req, res){
 }
 module.exports.update = update;
 
+
+
 const remove = async function(req, res){
     let project, err;
     project = req.project;
@@ -64,12 +75,13 @@ const remove = async function(req, res){
 module.exports.remove = remove;
 
 
+
 // Display Member create form on GET.
 exports.create_project_post = async function(req, res, next) {     
     res.setHeader('Content-Type', 'application/json'); 
     
     const body = req.body;
-    let err, user, project;
+    let err, member, project;
 
     if(!body.title) return ReE(res, "A Project title was not entered. Please enter a Project title");
     if(!body.category) return ReE(res, "A Project category was not entered. Please enter a Project Category");
@@ -93,34 +105,37 @@ exports.create_project_post = async function(req, res, next) {
 };
 
 
-// Display Member create form on GET.
-exports.delete_project = async function(req, res, next) {     
-    res.setHeader('Content-Type', 'application/json'); 
+
+// // Display Member create form on GET.
+// exports.delete_project = async function(req, res, next) {     
+//     res.setHeader('Content-Type', 'application/json'); 
     
-    const body = req.body;
-    let err, user, project;
+//     const body = req.body;
+//     let err, member, project;
+//     project = body.project;
 
-    if(!body.title) return ReE(res, "A Project title was not entered. Please enter a Project title");
-    if(!body.category) return ReE(res, "A Project category was not entered. Please enter a Project Category");
+//     if(!body.title) return ReE(res, "A Project title was not entered. Please enter a Project title");
+//     if(!body.category) return ReE(res, "A Project category was not entered. Please enter a Project Category");
 
-    // input sanitization - only enter what's required.
-    const { title, category} = body;
-    const projectInfo = {
-        title,
-        category,
-        member,
-        technologies,
-        start_date,
-        end_date,
-    };
+    
+//     // input sanitization - only enter what's required.
+//     const { title, category} = body;
+//     const projectInfo = {
+//         title,
+//         category,
+//         member,
+//         technologies,
+//         start_date,
+//         end_date,
+//     };
 
-    [err, project] = await to(Project.remove(projectInfo));
-    // console.log(err)
-    // console.log(member)
-    if(err) return ReE(res, err.message);
+//     [err, project] = await to(Project.remove(projectInfo));
+//     // console.log(err)
+//     // console.log(member)
+//     if(err) return ReE(res, err.message);
 
-    return ReS(res, {message: 'successfully deleted the project'});
-};
+//     return ReS(res, {message: 'successfully deleted the project'});
+// };
 
 
 
