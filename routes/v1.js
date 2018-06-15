@@ -20,6 +20,7 @@ const path              = require('path');
 // link routes for other models and controllers
 const users = require('./users');
 const members = require('./members');
+const resources = require('./resources');
 //const technologies = require('./technologies');
 //const bootcamps = require('./bootcamps');
 //const notifications = require('./notifications');
@@ -39,6 +40,7 @@ router.get('/', function(req, res, next) {
 //router.use('/notifications', notifications);
 router.use('/projects', projects);
 router.use('/members', members);
+router.use('/resources', resources);
 router.use('/users', users);
 //router.use('/accounts', accounts);
 
