@@ -7,8 +7,8 @@ let ProjectSchema = mongoose.Schema(
   {
     title: {type: String, required: true},
     category: {type: String, required: true},
-    member: {type: Schema.ObjectId, ref: 'Member'},
-    technology: {type: Schema.ObjectId, ref: 'Technology'},
+    member: {type: mongoose.Schema.ObjectId, ref: 'Member'},
+    technology: {type: mongoose.Schema.ObjectId, ref: 'Technology'},
     start_date: {type: Date,},
     end_date: {type: Date},
   }, {timestamps: true});
