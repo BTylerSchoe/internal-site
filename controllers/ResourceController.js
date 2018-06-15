@@ -1,37 +1,64 @@
-const User = require('../models').User;
-const resourceService   = require('./../services/ResourceService');
+const Resource = require('../models').Resource;
+const resourceService = require("./../services/ResourceService");
 
-const create = async function(req, res){
-    res.setHeader('Content-Type', 'application/json');
-    const body = req.body;
-    let err, resource;
+const create = async function(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  const body = req.body;
+  let err, resource;
 
-    [err, resource] = await to(resourceService.createResource(body));
+  [err, resource] = await to(resourceService.createResource(body));
 
-    if(err) return ReE(res, err, 422);
-    return ReS(res, {message:'Successfully added new resource.', user:resource.toWeb(), token:user.getJWT()}, 201);
-}
+  if (err) return ReE(res, err, 422);
+  return ReS(
+    res,
+    {
+      message: "Successfully added new resource.",
+      resource: resource.toWeb()
+    },
+    201
+  );
+};
 module.exports.create = create;
 
+const get = async function(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  console.log("hello");
+  let user = req.user;
+  // let companies = await user.Companies()
 
-
-const get = async function(req, res){
-    res.setHeader('Content-Type', 'application/json');
-    console.log("hello")
-    let user = req.user;
-    // let companies = await user.Companies()
-
-    return ReS(res, {user:user.toWeb(), companies: await user.Companies(), jwt: user.getJWT()});
-}
+  return ReS(res, {
+    user: user.toWeb(),
+    companies: await user.Companies(),
+    jwt: user.getJWT()
+  });
+};
 module.exports.get = get;
 
+const getAll = async function(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  let err, resources;
+  let user = req.user;
+  // let companies = await user.Companies()
+  
+  [err, resources] = await to(Resource.find({}));
 
-const getAll = async function(req, res){
-    res.setHeader('Content-Type', 'application/json');
-    console.log("hello")
-    let user = req.user;
-    // let companies = await user.Companies()
+  return ReS(res, {
+    message: "Successfully retrieved resources.",
+    resources
+  });
+};
+module.exports.getAll = getAll;
 
-    return ReS(res, {user:user.toWeb(), companies: await user.Companies(), jwt: user.getJWT()});
-}
+const getByTag = async function(req, res) {
+  res.setHeader("Content-Type", "application/json");
+  console.log("hello");
+  let user = req.user;
+  // let companies = await user.Companies()
+
+  return ReS(res, {
+    user: user.toWeb(),
+    companies: await user.Companies(),
+    jwt: user.getJWT()
+  });
+};
 module.exports.getAll = getAll;

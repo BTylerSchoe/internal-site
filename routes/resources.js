@@ -10,12 +10,10 @@ const path = require("path");
 router.post("/", ResourceController.create); // C
 router.get(
   "/",
-  passport.authenticate("jwt", { session: false }),
   ResourceController.get
 ); // R
 router.get(
     "/all",
-    passport.authenticate("jwt", { session: false }),
     ResourceController.getAll
   ); // R
 // router.put(

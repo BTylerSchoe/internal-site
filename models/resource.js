@@ -5,9 +5,9 @@ const validate          = require('mongoose-validator');
 
 
 let ResourceSchema = mongoose.Schema({
-    title: { type: String, required: true, index: true},
-    description: { type: String, required: true},
-    url: { type: String, required: true},
+    title: { type: String, required: false, index: true},
+    description: { type: String, required: false},
+    url: { type: String, unique: true, required: true},
     tags: [{ type: String, required: false, index: true }]
 },
 {
@@ -18,5 +18,11 @@ let ResourceSchema = mongoose.Schema({
     collection: "resources"
 });
 
-let Resource = module.exports = mongoose.model('Resource', ResourceSchema);
+ResourceSchema.methods.toWeb = function(){
+    let json = this.toJSON();
+    json.id = this._id;//this is for the front end
+    return json;
+};
+
+let Resource = (module.exports = mongoose.model('Resources', ResourceSchema));
 
