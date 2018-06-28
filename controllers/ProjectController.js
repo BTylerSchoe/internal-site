@@ -1,141 +1,107 @@
 const Project = require('../models').Project;
-const validator = require('validator');
+const ProjectService = require("./../services/ProjectService");
 
-const create = async function(req, res){
-    res.setHeader('Content-Type', 'application/json');
+const create = async function(req, res) {
+    res.setHeader("Content-Type", "application/json");
     const body = req.body;
-    if(!body.unique_key && ! body.title){
-        return ReE(res, 'Please enter a title to create a project');
-    } else if(!body.category){
-        return ReE(res, 'Please enter a category to create a project');
-    }else{
-        let err, member;
-
-        [err, member] = await to(authService.createProject(body));
-
-        if(err) return ReE(res, err, 422);
-        return ReS(res, {message:'Successfully created a new project.', member:member.toWeb(), token:member.getJWT()}, 201);
-    }
-}
+    let err, project;
+  
+    [err, project] = await to(ProjectService.createProject(body));
+  
+    if (err) return ReE(res, err, 422);
+    return ReS(
+      res,
+      {
+        message: "Successfully added new project.",
+        project: project.toWeb()
+      },
+      201
+    );
+};
 module.exports.create = create;
 
-// Jesus loves Brayden
+
+
+// const get = async function(req, res){
+//     res.setHeader('Content-Type', 'application/json');
+//     let err, project;
+//     [err, project] = await to(Project.find({}));
+
+//     return ReS(res, {
+//         message: "Successfully retrieved project.",
+//         project
+//       });
+//     };
+//     module.exports.get = get;
+
+
+// Find a single project with a projectId
+    const get = async function(req, res){
+    Project.findById(req.params.projectId)
+    .then(project => {
+        if(!project) {
+            return ReS(res, {
+                message: "project not found with id " + req.params.projectId
+            });            
+        }
+        res.send(project);
+    }).catch(err => {
+        if(err.kind === 'ObjectId') {
+            return ReS(res, {
+                message: "project not found with id " + req.params.projectId
+            });                
+        }
+        return ReS(res, {
+            message: "Error retrieving project with id " + req.params.projectId
+        });
+    });
+};
+module.exports.get = get;
 
 const getAll = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
     let member = req.member;
     let err, projects;
-    [err, projects] = await to(member.Projects());
+    [err, projects] = await to(Project.find());
 
-    let projects_json = []
-    for (let i in projects){
-        let project = projects[i];
-        projects_json.push(project.toWeb())
-    }
-    return ReS(res, {projects: projects_json});
-}
-module.exports.getAll = getAll;
-
-
-
-const get = function(req, res){
-    res.setHeader('Content-Type', 'application/json');
-    let project = req.project;
-    return ReS(res, {project:project.toWeb()});
-}
-module.exports.get = get;
-
+    return ReS(res, {
+        message: "Successfully retrieved projects.",
+        projects
+      });
+    };
+    module.exports.getAll = getAll;
 
 
 const update = async function(req, res){
-    let err, project, data;
-    project = req.project;
+    let err, Project, data;
+    Project = req.project;
     data = req.body;
-    project.set(data);
+    Project.set(data);
 
-    [err, project] = await to(project.save());
+    [err, Project] = await to(Project.save());
     if(err){
         return ReE(res, err);
     }
-    return ReS(res, {project:project.toWeb()});
+    return ReS(res, {Project:Project.toWeb()});
 }
 module.exports.update = update;
 
 
-
+// remove project //
 const remove = async function(req, res){
-    let project, err;
-    project = req.project;
+    let body, err;
+    body = req.body;
 
-    [err, project] = await to(project.remove());
+    [err, project] = await to(ProjectService.deleteProject(body));
     if(err) return ReE(res, 'error occured trying to delete the project');
-
-    return ReS(res, {message:'Deleted Project-'}, 204);
-}
-module.exports.remove = remove;
-
-
-
-// Display Member create form on GET.
-exports.create_project_post = async function(req, res, next) {     
-    res.setHeader('Content-Type', 'application/json'); 
-    
-    const body = req.body;
-    let err, member, project;
-
-    if(!body.title) return ReE(res, "A Project title was not entered. Please enter a Project title");
-    if(!body.category) return ReE(res, "A Project category was not entered. Please enter a Project Category");
-
-    if(!validator.isLength(body.title, {min: 3, max: 50})) return ReE(res, "A valid project title was not entered.");
-    if(!validator.isLength(body.category, {min: 3, max: 50})) return ReE(res, "A valid project category was not entered.");
-
-    // input sanitization - only enter what's required.
-    const { title, category} = body;
-    const projectInfo = {
-        title,
-        category,
-    };
-
-    [err, project] = await to(Project.create(projectInfo));
-    // console.log(err)
-    // console.log(member)
-    if(err) return ReE(res, err.message);
-
-    return ReS(res, {message: 'successfully created a new project', token: project.getJWT(), project: project.toWeb() });
-};
+  
+    return ReS(res, {message:'Deleted project-'}, 204);
+  }
+  module.exports.remove = remove;
 
 
 
-// // Display Member create form on GET.
-// exports.delete_project = async function(req, res, next) {     
-//     res.setHeader('Content-Type', 'application/json'); 
-    
-//     const body = req.body;
-//     let err, member, project;
-//     project = body.project;
 
-//     if(!body.title) return ReE(res, "A Project title was not entered. Please enter a Project title");
-//     if(!body.category) return ReE(res, "A Project category was not entered. Please enter a Project Category");
-
-    
-//     // input sanitization - only enter what's required.
-//     const { title, category} = body;
-//     const projectInfo = {
-//         title,
-//         category,
-//         member,
-//         technologies,
-//         start_date,
-//         end_date,
-//     };
-
-//     [err, project] = await to(Project.remove(projectInfo));
-//     // console.log(err)
-//     // console.log(member)
-//     if(err) return ReE(res, err.message);
-
-//     return ReS(res, {message: 'successfully deleted the project'});
-// };
 
 
 

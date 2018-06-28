@@ -1,19 +1,19 @@
-const BootCamp = require('../models').BootCamp;
-const bootCampService = require("./../services/BootCampService");
+const Technology = require('../models').Technology;
+const technologyService = require("./../services/TechnologyService");
 
 const create = async function(req, res) {
   res.setHeader("Content-Type", "application/json");
   const body = req.body;
-  let err, bootCamp;
+  let err, technology;
 
-  [err, bootCamp] = await to(bootCampService.createBootCamp(body));
+  [err, technology] = await to(technologyService.createTechnology(body));
 
   if (err) return ReE(res, err, 422);
   return ReS(
     res,
     {
-      message: "Successfully added new bootCamp.",
-      bootCamp: bootCamp.toWeb()
+      message: "Successfully added new technology.",
+      technology: technology.toWeb()
     },
     201
   );
@@ -40,7 +40,7 @@ const getAll = async function(req, res) {
   let user = req.user;
   // let companies = await user.Companies()
   
-  [err, bootCamps] = await to(BootCamp.find({}));
+  [err, bootCamps] = await to(Technology.find({}));
 
   return ReS(res, {
     message: "Successfully retrieved bootCamps.",
@@ -64,27 +64,27 @@ const getByTag = async function(req, res) {
 module.exports.getAll = getAll;
 
 const update = async function(req, res){
-  let err, bootCamp, data;
-  bootCamp = req.bootCamp;
+  let err, technology, data;
+  technology = req.technology;
   data = req.body;
-  bootCamp.set(data);
+  technology.set(data);
 
-  [err, bootCamp] = await to(bootCamp.save());
+  [err, technology] = await to(technology.save());
   if(err){
       return ReE(res, err);
   }
-  return ReS(res, {bootCamp:bootCamp.toWeb()});
+  return ReS(res, {technology:technology.toWeb()});
 }
 module.exports.update = update;
 
-// remove bootCamp //
+// remove technology //
 const remove = async function(req, res){
-  let bootCamp, err;
-  bootCamp = req.bootCamp;
+  let technology, err;
+  technology = req.technology;
 
-  [err, bootCamp] = await to(bootCamp.remove());
-  if(err) return ReE(res, 'error occured trying to delete the bootCamp');
+  [err, technology] = await to(technology.remove());
+  if(err) return ReE(res, 'error occured trying to delete the technology');
 
-  return ReS(res, {message:'Deleted bootCamp-'}, 204);
+  return ReS(res, {message:'Deleted technology-'}, 204);
 }
 module.exports.remove = remove;

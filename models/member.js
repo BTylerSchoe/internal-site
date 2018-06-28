@@ -87,7 +87,7 @@ MemberSchema.methods.Projects = async function(){
 
 MemberSchema.methods.getJWT = function(){
   let expiration_time = parseInt(CONFIG.jwt_expiration);
-  return "Bearer "+jwt.sign({id:this._id}, CONFIG.jwt_encryption, {expiresIn: expiration_time});
+  return "Bearer "+jwt.sign({id:this._id, account_type: this.account_type}, CONFIG.jwt_encryption, {expiresIn: expiration_time});
 };
 
 MemberSchema.methods.toWeb = function(){

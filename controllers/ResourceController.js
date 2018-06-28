@@ -62,3 +62,29 @@ const getByTag = async function(req, res) {
   });
 };
 module.exports.getAll = getAll;
+
+const update = async function(req, res){
+  let err, resource, data;
+  resource = req.resource;
+  data = req.body;
+  resource.set(data);
+
+  [err, resource] = await to(resource.save());
+  if(err){
+      return ReE(res, err);
+  }
+  return ReS(res, {resource:resource.toWeb()});
+}
+module.exports.update = update;
+
+// remove resource //
+const remove = async function(req, res){
+  let resource, err;
+  resource = req.resource;
+
+  [err, resource] = await to(resource.remove());
+  if(err) return ReE(res, 'error occured trying to delete the resource');
+
+  return ReS(res, {message:'Deleted resource-'}, 204);
+}
+module.exports.remove = remove;

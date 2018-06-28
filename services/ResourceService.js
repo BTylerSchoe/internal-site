@@ -5,8 +5,8 @@ const validator     = require('validator');
 const createResource = async function(resourceInfo){
     let resource, err;
 
-    // if(!resourceInfo.title) TE("A title was not entered.");
-    // if(!resourceInfo.description) TE("A description was not entered.");
+    if(!resourceInfo.title) TE("A title was not entered.");
+    if(!resourceInfo.description) TE("A description was not entered.");
     if(!resourceInfo.url) TE("A url was not entered.");
     if(!resourceInfo.tags) TE("Tags were not entered.");
 

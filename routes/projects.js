@@ -1,4 +1,3 @@
-
 const express 			= require('express');
 const router 			= express.Router();
 
@@ -7,11 +6,13 @@ const ProjectController 	= require('./../controllers/ProjectController');
 const passport      	= require('passport');
 const path              = require('path');
 
-// all users routes start with /users
-router.post(    '/create',           ProjectController.create_project_post);                                                    // C
-// router.get(     '/read',             passport.authenticate('jwt', {session:false}), ProjectController.get);        // R
-// router.put(     '/update',           passport.authenticate('jwt', {session:false}), ProjectController.update);     // U
-// router.delete(  '/delete',           passport.authenticate('jwt', {session:false}), ProjectController.delete);     // D
+// all projects routes start with /projects
+router.post("/",            ProjectController.create);  //REMOVE CREATE,READ,ETC.                                                  // C
+//router.get("/",           passport.authenticate('jwt', {session:false}), ProjectController.get);        // R
+router.get("/all",          passport.authenticate('jwt', {session:false}), ProjectController.getAll); // R
+router.get('/:projectId',   ProjectController.get);
+router.put('/',             passport.authenticate('jwt', {session:false}), ProjectController.update);     // U
+router.delete('/',          passport.authenticate('jwt', {session:false}), ProjectController.remove);     // D
 
 
 module.exports = router

@@ -21,7 +21,9 @@ const get = async function(req, res){
     let user = req.user;
     // let companies = await user.Companies()
 
-    return ReS(res, {user:user.toWeb(), companies: await user.Companies(), jwt: user.getJWT()});
+    return ReS(res, {user:user.toWeb(), 
+        //companies: await user.Companies(),
+         jwt: user.getJWT()});
 }
 module.exports.get = get;
 
