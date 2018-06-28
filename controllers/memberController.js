@@ -1,46 +1,86 @@
 const Member = require('../models').Member;
 const authService   = require('./../services/AuthService');
-
-//var Member = require('../models/member');
-//var Project = require('../models/project');
-//var Bootcamp = require('../models/bootcamp');
-//var Technology = require('../models/technology');
-//var Notification = require('../models/notification');
-
 const validator = require('validator');
 
 var async = require('async');
 
-
-
 //Do not change until speakin to Amit()
-const create = async function(req, res){
-    res.setHeader('Content-Type', 'application/json');
+const create = async function(req, res) {
+    res.setHeader("Content-Type", "application/json");
     const body = req.body;
-    if(!body.unique_key && !body.email && !body.phone){
-        return ReE(res, 'Please enter an email or phone number to register.');
-    } else if(!body.password){
-        return ReE(res, 'Please enter a password to register.');
-    }else{
-        let err, member;
+    let err, member;
+  
+    [err, member] = await to(authService.createMember(body));
+  
+    if (err) return ReE(res, err, 422);
+    return ReS(
+      res,
+      {
+        message: "Successfully added new member.",
+        member: member.toWeb(), token:member.getJWT()}, 201);
+      }
+  module.exports.create = create;
 
-        [err, member] = await to(authService.createUser(body));// change to suit member??? or delete meber and work from user? ask amit!!
 
-        if(err) return ReE(res, err, 422);
-        return ReS(res, {message:'Successfully created new member.', member:member.toWeb(), token:member.getJWT()}, 201);
-    }
-}
-module.exports.create = create;
+// const get = async function(req, res){
+//     res.setHeader('Content-Type', 'application/json');
+//     console.log("hello")
+//     let member = req.member;
+//     // let companies = await member.Companies()
 
+//     return ReS(res, {member:member.toWeb(), companies: await member.Companies(), jwt: member.getJWT()});
+// }
+// module.exports.get = get;
+
+
+// Find a single member with a memberId
 const get = async function(req, res){
-    res.setHeader('Content-Type', 'application/json');
-    console.log("hello")
-    let member = req.member;
-    // let companies = await member.Companies()
-
-    return ReS(res, {member:member.toWeb(), companies: await member.Companies(), jwt: member.getJWT()});
-}
+    Member.findById(req.params.memberId)
+    .then(member => {
+        if(!member) {
+            return ReS(res, {
+                message: "member not found with id " + req.params.memberId
+            });            
+        }
+        res.send(member);
+    }).catch(err => {
+        if(err.kind === 'ObjectId') {
+            return ReS(res, {
+                message: "member not found with id " + req.params.memberId
+            });                
+        }
+        return ReS(res, {
+            message: "Error retrieving member with id " + req.params.memberId
+        });
+    });
+};
 module.exports.get = get;
+
+// const getAll = async function(req, res){
+//     res.setHeader('Content-Type', 'application/json');
+//     let member = req.member;
+//     let err, members;
+//     [err, members] = await to(Member.find());
+
+//     return ReS(res, {
+//         message: "Successfully retrieved members.",
+//         members
+//       });
+//     };
+//     module.exports.getAll = getAll;
+
+    const getAll = async function(req, res){
+        res.setHeader('Content-Type', 'application/json');
+        let member = req.member;
+        let err, members;
+        [err, members] = await to(Member.find());
+    
+        return ReS(res, {
+            message: "Successfully retrieved members.",
+            members
+          });
+        };
+        module.exports.getAll = getAll;
 
 const update = async function(req, res){
     let err, member, data
@@ -68,23 +108,25 @@ const update = async function(req, res){
 }
 module.exports.update = update;
 
+// remove member //
 const remove = async function(req, res){
-    let member, err;
-    member = req.member;
+    let body, err, member;
+    body = req.body;
 
-    [err, member] = await to(member.destroy());
-    if(err) return ReE(res, 'error occured trying to delete member');
-
-    return ReS(res, {message:'Deleted Member'}, 204);
-}
-module.exports.remove = remove;
+    //console.log(authService.deleteMember(body));
+    [err, member] = await to(authService.deleteMember(body));
+    if(err) return ReE(res, 'error occured trying to delete the member');
+  
+    return ReS(res, {message:'Deleted member-'}, 204);
+  }
+  module.exports.remove = remove;
 
 
 const login = async function(req, res){
     const body = req.body;
     let err, member;
 
-    [err, member] = await to(authService.authUser(req.body));// ask amit about change / relates to same syntax above
+    [err, member] = await to(authService.authMember(req.body));// ask amit about change / relates to same syntax above
     if(err) return ReE(res, err, 422);
 
     return ReS(res, {token:member.getJWT(), member:member.toWeb()});

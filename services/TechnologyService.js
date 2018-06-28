@@ -27,19 +27,20 @@ const createTechnology = async function(technologyInfo){
 module.exports.createTechnology = createTechnology;
 
 
+
 const deleteTechnology = async function(technologyInfo){
     let technology, err;
 
     if(!technologyInfo.title) TE("A title was not selected.");
-    if(!technologyInfo.category) TE("A category was not selected.");
+    //if(!technologyInfo.category) TE("A category was not selected.");
 
     // input sanitization - only enter what's required.
     const { title, category} = technologyInfo;
     const oldTechnology = { title, category};
 
-    [err, technology] = await to(technology.remove(oldTechnology));
+    [err, technology] = await to(Technology.remove(oldTechnology));
     if(err) TE(err.message);
 
     return technology;
 }
-module.exports.deletetechnology = deleteTechnology;
+module.exports.deleteTechnology = deleteTechnology;

@@ -10,11 +10,13 @@ const passport      	= require('passport');
 const path              = require('path');
 
 // all members routes start with /members
-//router.post(    '/',           MemberController.create);                                                    // C
+router.post(    '/',           MemberController.create);                                                    // C
 //router.get(     '/',           passport.authenticate('jwt', {session:false}), MemberController.get);        // R
-//router.get(    '/all',         passport.authenticate('jwt', {session:false}), MemberController.getAll);     // R
-//router.put(     '/',           passport.authenticate('jwt', {session:false}), MemberController.update);     // U
-//router.delete(  '/',           passport.authenticate('jwt', {session:false}), MemberController.delete);     // D
+router.get(    "/all",         passport.authenticate('jwt', {session:false}), MemberController.getAll);
+router.get('/:memberId',   MemberController.get);
+     // R
+// router.put(     '/',           passport.authenticate('jwt', {session:false}), MemberController.update);     // U
+router.delete(  '/',           passport.authenticate('jwt', {session:false}), MemberController.remove);     // D
 
 
 module.exports = router

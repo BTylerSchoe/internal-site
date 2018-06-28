@@ -20,34 +20,55 @@ const create = async function(req, res) {
 };
 module.exports.create = create;
 
-const get = async function(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  console.log("hello");
-  let user = req.user;
-  // let companies = await user.Companies()
 
-  return ReS(res, {
-    user: user.toWeb(),
-    //companies: await user.Companies(),
-    jwt: user.getJWT()
+// const get = async function(req, res){
+//     res.setHeader('Content-Type', 'application/json');
+//     let err, technology;
+//     [err, technology] = await to(technology.find({}));
+
+//     return ReS(res, {
+//         message: "Successfully retrieved technology.",
+//         technology
+//       });
+//     };
+//     module.exports.get = get;
+
+
+// Find a single technology with a technologyId
+const get = async function(req, res){
+  Technology.findById(req.params.technologyId)
+  .then(technology => {
+      if(!technology) {
+          return ReS(res, {
+              message: "technology not found with id " + req.params.technologyId
+          });            
+      }
+      res.send(technology);
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return ReS(res, {
+              message: "technology not found with id " + req.params.technologyId
+          });                
+      }
+      return ReS(res, {
+          message: "Error retrieving technology with id " + req.params.technologyId
+      });
   });
 };
 module.exports.get = get;
 
-const getAll = async function(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  let err, bootCamps;
-  let user = req.user;
-  // let companies = await user.Companies()
-  
-  [err, bootCamps] = await to(Technology.find({}));
+const getAll = async function(req, res){
+  res.setHeader('Content-Type', 'application/json');
+  let technology = req.technology;
+  let err, technologies;
+  [err, technologies] = await to(Technology.find());
 
   return ReS(res, {
-    message: "Successfully retrieved bootCamps.",
-    bootCamps
-  });
-};
-module.exports.getAll = getAll;
+      message: "Successfully retrieved technologys.",
+      technologies
+    });
+  };
+  module.exports.getAll = getAll;
 
 const getByTag = async function(req, res) {
   res.setHeader("Content-Type", "application/json");
@@ -77,14 +98,17 @@ const update = async function(req, res){
 }
 module.exports.update = update;
 
+
+
 // remove technology //
 const remove = async function(req, res){
-  let technology, err;
-  technology = req.technology;
+    let body, err, technology;
+    body = req.body;
 
-  [err, technology] = await to(technology.remove());
-  if(err) return ReE(res, 'error occured trying to delete the technology');
-
-  return ReS(res, {message:'Deleted technology-'}, 204);
-}
-module.exports.remove = remove;
+    console.log(technologyService.deleteTechnology(body));
+    [err, technology] = await to(technologyService.deleteTechnology(body));
+    if(err) return ReE(res, 'error occured trying to delete the technology');
+  
+    return ReS(res, {message:'Deleted technology-'}, 204);
+  }
+  module.exports.remove = remove;
