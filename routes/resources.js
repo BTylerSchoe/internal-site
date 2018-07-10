@@ -11,7 +11,7 @@ router.post("/",                      ResourceController.create);  //REMOVE CREA
 //router.get("/",                     passport.authenticate('jwt', {session:false}), ResourceController.get);        // R
 router.get("/all",                    passport.authenticate('jwt', {session:false}), ResourceController.getAll); // R
 router.get('/:resourceId',            passport.authenticate('jwt', {session:false}), ResourceController.get);
-router.put("/",                       passport.authenticate("jwt", { session: false }), ResourceController.update); // U
+router.put("/:resourceId",            passport.authenticate("jwt", { session: false }), ResourceController.update); // U
 router.delete("/",                    passport.authenticate("jwt", { session: false }), ResourceController.remove); // D
 
 module.exports = router;

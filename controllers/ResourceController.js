@@ -73,19 +73,55 @@ const getByTag = async function(req, res) {
 };
 module.exports.getAll = getAll;
 
+// Update a resource identified by the resourceId in the request
 const update = async function(req, res){
-  let err, resource, data;
-  resource = req.resource;
-  data = req.body;
-  resource.set(data);
-
-  [err, resource] = await to(resource.save());
-  if(err){
-      return ReE(res, err);
+  // Validate Request
+  if(!req.body) {
+      return res.status(400).send({
+          message: "resource body can not be empty"
+      });
   }
-  return ReS(res, {resource:resource.toWeb()});
-}
+
+  // Find resource and update it with the request body
+  Resource.findByIdAndUpdate(req.params.resourceId, {
+    title: req.body.title,
+    description: req.body.description,
+    url: req.body.url,
+    tags: req.body.tags
+  }, {new: true})
+  .then(resource => {
+      if(!resource) {
+          return res.status(404).send({
+              message: "resource not found with id " + req.params.resourceId
+          });
+      }
+      return ReS(res,{resource:resource.toWeb()});
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return res.status(404).send({
+              message: "resource not found with id " + req.params.resourceId
+          });                
+      }
+      return res.status(500).send({
+          message: "Error updating resource with id " + req.params.resourceId
+      });
+  });
+};
 module.exports.update = update;
+
+// const update = async function(req, res){
+//   let err, resource, data;
+//   resource = req.resource;
+//   data = req.body;
+//   resource.set(data);
+
+//   [err, resource] = await to(resource.save());
+//   if(err){
+//       return ReE(res, err);
+//   }
+//   return ReS(res, {resource:resource.toWeb()});
+// }
+// module.exports.update = update;
 
 // remove resource //
 const remove = async function(req, res){

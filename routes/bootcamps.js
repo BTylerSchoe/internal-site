@@ -12,7 +12,7 @@ router.post(    '/',              BootCampController.create);                   
 //router.get(     '/',            passport.authenticate('jwt', {session:false}), BootCampController.get);        // R
 router.get(     '/all',           passport.authenticate('jwt', {session:false}), BootCampController.getAll);     // R
 router.get("/:bootcampId",        passport.authenticate('jwt', {session:false}), BootCampController.get);
-// router.put(     '/',           passport.authenticate('jwt', {session:false}), BootCampController.update);     // U
+router.put(     '/:bootcampId',           passport.authenticate('jwt', {session:false}), BootCampController.update);     // U
 router.delete(  '/',           passport.authenticate('jwt', {session:false}), BootCampController.remove);     // D
 
 

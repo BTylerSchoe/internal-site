@@ -10,7 +10,6 @@ let ProjectSchema = mongoose.Schema(
     title: {type: String, unique: true, required: true},
     category: {type: String, required: true},
     description: {type: String, require: true},
-    projectLeader: {type: mongoose.Schema.ObjectId, ref: "Member"},
     member: {type: mongoose.Schema.ObjectId, ref: 'Member'},
     technology: {type: mongoose.Schema.ObjectId, ref: 'Technology'},
     tags: [{ type: String, required: false, index: true }],

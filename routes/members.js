@@ -14,7 +14,7 @@ router.post(    '/',              MemberController.create);                     
 //router.get(     '/',            passport.authenticate('jwt', {session:false}), MemberController.get);        // R
 router.get(    "/all",            passport.authenticate('jwt', {session:false}), MemberController.getAll);
 router.get('/:memberId',          passport.authenticate('jwt', {session:false}), MemberController.get);// R
-// router.put(     '/',           passport.authenticate('jwt', {session:false}), MemberController.update);     // U
+router.put(     '/:memberId',           passport.authenticate('jwt', {session:false}), MemberController.update);     // U
 router.delete(  '/',              passport.authenticate('jwt', {session:false}), MemberController.remove);     // D
 
 

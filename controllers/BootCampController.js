@@ -57,34 +57,54 @@ const getAll = async function(req, res){
   };
   module.exports.getAll = getAll;
 
-
-// const getByTag = async function(req, res) {
-//   res.setHeader("Content-Type", "application/json");
-//   console.log("hello");
-//   let member = req.member;
-//   // let companies = await member.Companies()
-
-//   return ReS(res, {
-//     member: member.toWeb(),
-//     //companies: await member.Companies(),
-//     jwt: member.getJWT()
-//   });
-// };
-// module.exports.getAll = getAll;
-
+// Update a bootcamp identified by the bootcampId in the request
 const update = async function(req, res){
-  let err, bootCamp, data;
-  bootCamp = req.bootCamp;
-  data = req.body;
-  bootCamp.set(data);
-
-  [err, bootCamp] = await to(bootCamp.save());
-  if(err){
-      return ReE(res, err);
-  }
-  return ReS(res, {bootCamp:bootCamp.toWeb()});
-}
+    // Validate Request
+    if(!req.body) {
+        return res.status(400).send({
+            message: "bootcamp body can not be empty"
+        });
+    }
+  // Find bootcamp and update it with the request body
+  Bootcamp.findByIdAndUpdate(req.params.bootcampId, {
+    title: req.body.title || "Untitled Bootcamp",
+    category: req.body.category,
+    image: req.body.image,
+    url: req.body.url
+}, {new: true})
+.then(bootcamp => {
+    if(!bootcamp) {
+        return res.status(404).send({
+            message: "Bootcamp not found with id " + req.params.bootcampId
+        });
+    }
+    return ReS(res,{bootcamp:bootcamp.toWeb()});
+}).catch(err => {
+    if(err.kind === 'ObjectId') {
+        return res.status(404).send({
+            message: "Bootcamp not found with id " + req.params.bootcampId
+        });                
+    }
+    return res.status(500).send({
+        message: "Error updating Bootcamp with id " + req.params.bootcampId
+    });
+});
+};
 module.exports.update = update;
+
+// const update = async function(req, res){
+//   let err, bootCamp, data;
+//   bootCamp = req.bootCamp;
+//   data = req.body;
+//   bootCamp.set(data);
+
+//   [err, bootCamp] = await to(bootCamp.save());
+//   if(err){
+//       return ReE(res, err);
+//   }
+//   return ReS(res, {bootCamp:bootCamp.toWeb()});
+// }
+// module.exports.update = update;
 
 // remove bootcamp //
 const remove = async function(req, res){

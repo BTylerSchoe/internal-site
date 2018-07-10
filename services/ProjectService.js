@@ -76,25 +76,26 @@ module.exports.deleteProject = deleteProject;
 // module.exports.updateProject = updateProject;
 
 
-const set = async function(data){
+// const updateProject = async function(data){
 
-    let err, project;
+//     let err, project;
 
-    if(!data.title) TE('A valid project title was not entered, please try again.');
-    if(!data.category) TE('A valid project category was not entered, please try again.');
+//     if(!data.title) TE('A valid project title was not entered, please try again.');
+//     if(!data.category) TE('A valid project category was not entered, please try again.');
 
-    if(data.title && !validator.isLength(data.title, {min: 3, max: 50})) TE("A valid title was not entered.");
-    if(data.category && !validator.isLength(data.category, {min: 3, max: 50})) TE("A valid project category was not entered.");
+//     if(data.title && !validator.isLength(data.title, {min: 3, max: 50})) TE("A valid title was not entered.");
+//     if(data.category && !validator.isLength(data.category, {min: 3, max: 50})) TE("A valid project category was not entered.");
+//     if(data.description && !validator.isLength(data.description, {min: 3, max: 280})) TE("A valid project description was not entered");
 
-    const { title, category, description} = data;
-    const updatedProject = { title, category, description};
+//     const { title, category, description} = data;
+//     const updatedProject = { title, category, description};
 
 
 
-        [err, project] = await to(Project.update(updatedProject));
-        if(err) TE(err.message);
+//         [err, project] = await to(Project.update(updatedProject));
+//         if(err) TE(err.message);
 
-    return project;
+//     return project;
 
-}
-module.exports.set = set;
+// }
+// module.exports.updateProject = updateProject;

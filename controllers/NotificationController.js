@@ -73,19 +73,55 @@ const getByTag = async function(req, res) {
 };
 module.exports.getAll = getAll;
 
+// Update a notification identified by the notificationId in the request
 const update = async function(req, res){
-  let err, notification, data;
-  notification = req.notification;
-  data = req.body;
-  notification.set(data);
-
-  [err, notification] = await to(notification.save());
-  if(err){
-      return ReE(res, err);
+  // Validate Request
+  if(!req.body) {
+      return res.status(400).send({
+          message: "notification body can not be empty"
+      });
   }
-  return ReS(res, {notification:notification.toWeb()});
-}
+
+  // Find notification and update it with the request body
+  Notification.findByIdAndUpdate(req.params.notificationId, {
+      title: req.body.title || "Untitled Notification",
+      subject: req.body.subject,
+      message: req.body.message,
+      content: req.body.content
+  }, {new: true})
+  .then(notification => {
+      if(!notification) {
+          return res.status(404).send({
+              message: "Notification not found with id " + req.params.notificationId
+          });
+      }
+      return ReS(res,{notification:notification.toWeb()});
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return res.status(404).send({
+              message: "Notification not found with id " + req.params.notificationId
+          });                
+      }
+      return res.status(500).send({
+          message: "Error updating Notification with id " + req.params.notificationId
+      });
+  });
+};
 module.exports.update = update;
+
+// const update = async function(req, res){
+//   let err, notification, data;
+//   notification = req.notification;
+//   data = req.body;
+//   notification.set(data);
+
+//   [err, notification] = await to(notification.save());
+//   if(err){
+//       return ReE(res, err);
+//   }
+//   return ReS(res, {notification:notification.toWeb()});
+// }
+// module.exports.update = update;
 
 // remove notification //
 const remove = async function(req, res){

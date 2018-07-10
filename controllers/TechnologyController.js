@@ -84,19 +84,55 @@ const getByTag = async function(req, res) {
 };
 module.exports.getAll = getAll;
 
+// Update a technology identified by the technologyId in the request
 const update = async function(req, res){
-  let err, technology, data;
-  technology = req.technology;
-  data = req.body;
-  technology.set(data);
-
-  [err, technology] = await to(technology.save());
-  if(err){
-      return ReE(res, err);
+  // Validate Request
+  if(!req.body) {
+      return res.status(400).send({
+          message: "technology body can not be empty"
+      });
   }
-  return ReS(res, {technology:technology.toWeb()});
-}
+
+  // Find technology and update it with the request body
+  Technology.findByIdAndUpdate(req.params.technologyId, {
+      title: req.body.title || "Untitled technology",
+      description: req.body.description,
+      url: req.body.url,
+      tags: req.body.tags
+  }, {new: true})
+  .then(technology => {
+      if(!technology) {
+          return res.status(404).send({
+              message: "technology not found with id " + req.params.technologyId
+          });
+      }
+      return ReS(res,{technology:technology.toWeb()});
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return res.status(404).send({
+              message: "technology not found with id " + req.params.technologyId
+          });                
+      }
+      return res.status(500).send({
+          message: "Error updating technology with id " + req.params.technologyId
+      });
+  });
+};
 module.exports.update = update;
+
+// const update = async function(req, res){
+//   let err, technology, data;
+//   technology = req.technology;
+//   data = req.body;
+//   technology.set(data);
+
+//   [err, technology] = await to(technology.save());
+//   if(err){
+//       return ReE(res, err);
+//   }
+//   return ReS(res, {technology:technology.toWeb()});
+// }
+// module.exports.update = update;
 
 
 

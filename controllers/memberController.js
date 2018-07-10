@@ -82,31 +82,68 @@ module.exports.get = get;
         };
         module.exports.getAll = getAll;
 
+// Update a member identified by the memberId in the request
 const update = async function(req, res){
-    let err, member, data
-    member = req.member;
-    data = req.body;
-    member.set(data);
-
-    [err, member] = await to(member.save());
-    if(err){
-        console.log(err, member);
-
-        if(err.message.includes('E11000')){
-            if(err.message.includes('phone')){
-                err = 'This phone number is already in use';
-            } else if(err.message.includes('email')){
-                err = 'This email address is already in use';
-            }else{
-                err = 'Duplicate Key Entry';
-            }
-        }
-
-        return ReE(res, err);
+    // Validate Request
+    if(!req.body) {
+        return res.status(400).send({
+            message: "member body can not be empty"
+        });
     }
-    return ReS(res, {message :'Updated Member: '+member.email});
-}
+
+    // Find member and update it with the request body
+    Member.findByIdAndUpdate(req.params.memberId, {
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        password: req.body.password,
+        account_type: req.body.account_type
+    }, {new: true})
+    .then(member => {
+        if(!member) {
+            return res.status(404).send({
+                message: "member not found with id " + req.params.memberId
+            });
+        }
+        return ReS(res,{member:member.toWeb()});
+    }).catch(err => {
+        if(err.kind === 'ObjectId') {
+            return res.status(404).send({
+                message: "member not found with id " + req.params.memberId
+            });                
+        }
+        return res.status(500).send({
+            message: "Error updating member with id " + req.params.memberId
+        });
+    });
+};
 module.exports.update = update;
+
+// const update = async function(req, res){
+//     let err, member, data
+//     member = req.member;
+//     data = req.body;
+//     member.set(data);
+
+//     [err, member] = await to(member.save());
+//     if(err){
+//         console.log(err, member);
+
+//         if(err.message.includes('E11000')){
+//             if(err.message.includes('phone')){
+//                 err = 'This phone number is already in use';
+//             } else if(err.message.includes('email')){
+//                 err = 'This email address is already in use';
+//             }else{
+//                 err = 'Duplicate Key Entry';
+//             }
+//         }
+
+//         return ReE(res, err);
+//     }
+//     return ReS(res, {message :'Updated Member: '+member.email});
+// }
+// module.exports.update = update;
 
 // remove member //
 const remove = async function(req, res){

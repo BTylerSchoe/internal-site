@@ -12,7 +12,7 @@ const path              = require('path');
 router.post(    '/',                        TechnologyController.create);     
 router.get(     '/all',                     passport.authenticate('jwt', {session:false}), TechnologyController.getAll);     // R                                               // C
 router.get(     "/:technologyId",           passport.authenticate('jwt', {session:false}), TechnologyController.get);        // R
-router.put(     '/',                        passport.authenticate('jwt', {session:false}), TechnologyController.update);     // U
+router.put(     '/:technologyId',           passport.authenticate('jwt', {session:false}), TechnologyController.update);     // U
 router.delete(  '/',                        passport.authenticate('jwt', {session:false}), TechnologyController.remove);     // D
 
 
