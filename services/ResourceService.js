@@ -25,3 +25,20 @@ const createResource = async function(resourceInfo){
     return resource;
 }
 module.exports.createResource = createResource;
+
+const deleteResource = async function(resourceInfo){
+    let resource, err;
+
+    if(!resourceInfo.title) TE("A title was not selected.");
+
+
+    // input sanitization - only enter what's required.
+    const { title } = resourceInfo;
+    const oldResource = { title };
+
+    [err, resource] = await to(Resource.remove(oldResource));
+    if(err) TE(err.message);
+
+    return resource;
+}
+module.exports.deleteResource = deleteResource;

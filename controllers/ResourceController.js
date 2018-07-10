@@ -20,16 +20,26 @@ const create = async function(req, res) {
 };
 module.exports.create = create;
 
-const get = async function(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  console.log("hello");
-  let user = req.user;
-  // let companies = await user.Companies()
 
-  return ReS(res, {
-    user: user.toWeb(),
-    companies: await user.Companies(),
-    jwt: user.getJWT()
+// Find a single resource with a resourceId
+const get = async function(req, res){
+  Resource.findById(req.params.resourceId)
+  .then(resource => {
+      if(!resource) {
+          return ReS(res, {
+              message: "resource not found with id " + req.params.resourceId
+          });            
+      }
+      res.send(resource);
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return ReS(res, {
+              message: "resource not found with id " + req.params.resourceId
+          });                
+      }
+      return ReS(res, {
+          message: "Error retrieving resource with id " + req.params.resourceId
+      });
   });
 };
 module.exports.get = get;
@@ -37,8 +47,8 @@ module.exports.get = get;
 const getAll = async function(req, res) {
   res.setHeader("Content-Type", "application/json");
   let err, resources;
-  let user = req.user;
-  // let companies = await user.Companies()
+  let member = req.member;
+  // let companies = await member.Companies()
   
   [err, resources] = await to(Resource.find({}));
 
@@ -52,13 +62,13 @@ module.exports.getAll = getAll;
 const getByTag = async function(req, res) {
   res.setHeader("Content-Type", "application/json");
   console.log("hello");
-  let user = req.user;
-  // let companies = await user.Companies()
+  let member = req.member;
+  // let companies = await member.Companies()
 
   return ReS(res, {
-    user: user.toWeb(),
-    companies: await user.Companies(),
-    jwt: user.getJWT()
+    member: member.toWeb(),
+    companies: await member.Companies(),
+    jwt: member.getJWT()
   });
 };
 module.exports.getAll = getAll;
@@ -79,10 +89,10 @@ module.exports.update = update;
 
 // remove resource //
 const remove = async function(req, res){
-  let resource, err;
-  resource = req.resource;
+  let body, err;
+  body = req.body;
 
-  [err, resource] = await to(resource.remove());
+  [err, resource] = await to(resourceService.deleteResource(body));
   if(err) return ReE(res, 'error occured trying to delete the resource');
 
   return ReS(res, {message:'Deleted resource-'}, 204);

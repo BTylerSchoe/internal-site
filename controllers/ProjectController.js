@@ -20,21 +20,6 @@ const create = async function(req, res) {
 };
 module.exports.create = create;
 
-
-
-// const get = async function(req, res){
-//     res.setHeader('Content-Type', 'application/json');
-//     let err, project;
-//     [err, project] = await to(Project.find({}));
-
-//     return ReS(res, {
-//         message: "Successfully retrieved project.",
-//         project
-//       });
-//     };
-//     module.exports.get = get;
-
-
 // Find a single project with a projectId
     const get = async function(req, res){
     Project.findById(req.params.projectId)
@@ -73,18 +58,21 @@ const getAll = async function(req, res){
 
 
 const update = async function(req, res){
-    let err, Project, data;
-    Project = req.project;
+    let err, project, data;
+    project = req.params.projectId;
+    console.log(project);
     data = req.body;
-    Project.set(data);
+    console.log(data);
+    ProjectService.set(data);
 
-    [err, Project] = await to(Project.save());
+    [err, Project] = await to(Project.save(data.title));
     if(err){
         return ReE(res, err);
     }
     return ReS(res, {Project:Project.toWeb()});
 }
 module.exports.update = update;
+
 
 
 // remove project //
@@ -104,5 +92,14 @@ const remove = async function(req, res){
 
 
 
+// // Find a single project with a projectId
+// const get = async function(req, res){
+    
+//     Project.findById(req.params.projectId)
+//     [err, project] = await to(ProjectService.deleteProject(body));
+//     if(err) return ReE(res, 'error occured trying to delete the project');
 
+//     }
+// };
+// module.exports.get = get;
 

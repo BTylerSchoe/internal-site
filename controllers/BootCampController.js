@@ -1,12 +1,12 @@
-const BootCamp = require('../models').BootCamp;
-const bootCampService = require("./../services/BootCampService");
+const Bootcamp = require('./../models').Bootcamp;
+const bootcampService = require("./../services/BootCampService");
 
 const create = async function(req, res) {
   res.setHeader("Content-Type", "application/json");
   const body = req.body;
   let err, bootCamp;
 
-  [err, bootCamp] = await to(bootCampService.createBootCamp(body));
+  [err, bootCamp] = await to(bootcampService.createBootCamp(body));
 
   if (err) return ReE(res, err, 422);
   return ReS(
@@ -20,48 +20,57 @@ const create = async function(req, res) {
 };
 module.exports.create = create;
 
-const get = async function(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  console.log("hello");
-  let user = req.user;
-  // let companies = await user.Companies()
-
-  return ReS(res, {
-    user: user.toWeb(),
-    //companies: await user.Companies(),
-    jwt: user.getJWT()
+// Find a single bootcamp with a bootcampId
+const get = async function(req, res){
+  Bootcamp.findById(req.params.bootcampId)
+  .then(bootcamp => {
+      if(!bootcamp) {
+          return ReS(res, {
+              message: "bootcamp not found with id " + req.params.bootcampId
+          });            
+      }
+      res.send(bootcamp);
+  }).catch(err => {
+      if(err.kind === 'ObjectId') {
+          return ReS(res, {
+              message: "bootcamp not found with id " + req.params.bootcampId
+          });                
+      }
+      return ReS(res, {
+          message: "Error retrieving bootcamp with id " + req.params.bootcampId
+      });
   });
 };
 module.exports.get = get;
 
-const getAll = async function(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  let err, bootCamps;
-  let user = req.user;
-  // let companies = await user.Companies()
-  
-  [err, bootCamps] = await to(BootCamp.find({}));
+
+const getAll = async function(req, res){
+  res.setHeader('Content-Type', 'application/json');
+  let member = req.member;
+  let err, bootcamps;
+  [err, bootcamps] = await to(Bootcamp.find());
 
   return ReS(res, {
-    message: "Successfully retrieved bootCamps.",
-    bootCamps
-  });
-};
-module.exports.getAll = getAll;
+      message: "Successfully retrieved bootcamps.",
+      bootcamps
+    });
+  };
+  module.exports.getAll = getAll;
 
-const getByTag = async function(req, res) {
-  res.setHeader("Content-Type", "application/json");
-  console.log("hello");
-  let user = req.user;
-  // let companies = await user.Companies()
 
-  return ReS(res, {
-    user: user.toWeb(),
-    companies: await user.Companies(),
-    jwt: user.getJWT()
-  });
-};
-module.exports.getAll = getAll;
+// const getByTag = async function(req, res) {
+//   res.setHeader("Content-Type", "application/json");
+//   console.log("hello");
+//   let member = req.member;
+//   // let companies = await member.Companies()
+
+//   return ReS(res, {
+//     member: member.toWeb(),
+//     //companies: await member.Companies(),
+//     jwt: member.getJWT()
+//   });
+// };
+// module.exports.getAll = getAll;
 
 const update = async function(req, res){
   let err, bootCamp, data;
@@ -77,14 +86,14 @@ const update = async function(req, res){
 }
 module.exports.update = update;
 
-// remove bootCamp //
+// remove bootcamp //
 const remove = async function(req, res){
-  let bootCamp, err;
-  bootCamp = req.bootCamp;
+    let body, err;
+    body = req.body;
 
-  [err, bootCamp] = await to(bootCamp.remove());
-  if(err) return ReE(res, 'error occured trying to delete the bootCamp');
-
-  return ReS(res, {message:'Deleted bootCamp-'}, 204);
-}
-module.exports.remove = remove;
+    [err, bootcamp] = await to(bootcampService.deleteBootCamp(body));
+    if(err) return ReE(res, 'error occured trying to delete the bootcamp');
+  
+    return ReS(res, {message:'Deleted bootcamp-'}, 204);
+  }
+  module.exports.remove = remove;

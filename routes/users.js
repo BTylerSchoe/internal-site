@@ -11,7 +11,7 @@ router.post(    '/',           UserController.create);                          
 router.get(     '/',           passport.authenticate('jwt', {session:false}), UserController.get);        // R
 router.put(     '/',           passport.authenticate('jwt', {session:false}), UserController.update);     // U
 router.delete(  '/',           passport.authenticate('jwt', {session:false}), UserController.remove);     // D
-router.post(    '/login',     UserController.login);
+router.post(    '/login',      UserController.login);
 
 
 module.exports = router

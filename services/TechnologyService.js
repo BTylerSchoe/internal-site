@@ -35,8 +35,8 @@ const deleteTechnology = async function(technologyInfo){
     //if(!technologyInfo.category) TE("A category was not selected.");
 
     // input sanitization - only enter what's required.
-    const { title, category} = technologyInfo;
-    const oldTechnology = { title, category};
+    const { title } = technologyInfo;
+    const oldTechnology = { title };
 
     [err, technology] = await to(Technology.remove(oldTechnology));
     if(err) TE(err.message);

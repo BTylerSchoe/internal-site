@@ -4,25 +4,24 @@ const validate          = require('mongoose-validator');
 
 
 
-let BootCampSchema = mongoose.Schema({
+let NotificationSchema = mongoose.Schema({
     title: { type: String, required: false, index: true},
-    category: {type: String, required: true},
-    descriptioin: { type: String, required: false},
-    image_location: { type: String, required: true},
-    url: {type: String, required: true}
+    subject: { type: String, required: false},
+    message: { type: String},
+    content: {type: String}
 },
 {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
     strict: true,
-    collection: "bootCamps"
+    collection: "notifications"
 });
 
-BootCampSchema.methods.toWeb = function(){
+NotificationSchema.methods.toWeb = function(){
     let json = this.toJSON();
     json.id = this._id;//this is for the front end
     return json;
 };
 
-let Bootcamp = (module.exports = mongoose.model('Bootcamps', BootCampSchema));
+let Notification = (module.exports = mongoose.model('Notifications', NotificationSchema));

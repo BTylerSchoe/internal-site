@@ -75,3 +75,26 @@ module.exports.deleteProject = deleteProject;
 // }
 // module.exports.updateProject = updateProject;
 
+
+const set = async function(data){
+
+    let err, project;
+
+    if(!data.title) TE('A valid project title was not entered, please try again.');
+    if(!data.category) TE('A valid project category was not entered, please try again.');
+
+    if(data.title && !validator.isLength(data.title, {min: 3, max: 50})) TE("A valid title was not entered.");
+    if(data.category && !validator.isLength(data.category, {min: 3, max: 50})) TE("A valid project category was not entered.");
+
+    const { title, category, description} = data;
+    const updatedProject = { title, category, description};
+
+
+
+        [err, project] = await to(Project.update(updatedProject));
+        if(err) TE(err.message);
+
+    return project;
+
+}
+module.exports.set = set;

@@ -5,8 +5,8 @@ const UserController 	= require('./../controllers/UserController');
 const CompanyController = require('./../controllers/CompanyController');
 const HomeController 	= require('./../controllers/HomeController');
 const TechnologyController = require('./../controllers/TechnologyController'); 
-//const = require('./../controllers/BootCampController');
-//const = require('./../controllers/NotificationController');
+const BootCampController = require('./../controllers/BootCampController');
+const NotificationController = require('./../controllers/NotificationController');
 const ProjectController = require('./../controllers/ProjectController');
 const MemberController = require('./../controllers/MemberController');
 
@@ -22,8 +22,8 @@ const users = require('./users');
 const members = require('./members');
 const resources = require('./resources');
 const technologies = require('./technologies');
-//const bootcamps = require('./bootcamps');
-//const notifications = require('./notifications');
+const bootcamps = require('./bootcamps');
+const notifications = require('./notifications');
 const projects = require('./projects');
 //
 
@@ -36,8 +36,8 @@ router.get('/', function(req, res, next) {
 
 // hook in the modular routes
 router.use('/technologies', technologies);
-//router.use('/bootcamps', bootcamps);
-//router.use('/notifications', notifications);
+router.use('/bootcamps', bootcamps);
+router.use('/notifications', notifications);
 router.use('/projects', projects);
 router.use('/members', members);
 router.use('/resources', resources);
