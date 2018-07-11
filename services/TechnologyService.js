@@ -44,3 +44,22 @@ const deleteTechnology = async function(technologyInfo){
     return technology;
 }
 module.exports.deleteTechnology = deleteTechnology;
+
+
+const updateTechnology = async function(technologyInfo, technologyId) {
+    let technology, err;
+
+    if(technologyInfo.title && !validator.isLength(technologyInfo.title, {min: 3, max: 50})) TE("A valid title was not entered.");
+    if(technologyInfo.description && !validator.isLength(technologyInfo.description, {min: 3, max: 280})) TE("A valid description was not entered.");
+    if(technologyInfo.url && !validator.isURL(technologyInfo.url)) TE("A valid url was not entered.");
+    if(technologyInfo.tags && technologyInfo.tags.length === 0) TE("You must have at least one tag.");
+
+    
+      const updatedTechnology = { ...technologyInfo };
+  
+      [err, technology] = await to(Technology.findOneAndUpdate({_id:technologyId}, updatedTechnology, {new:true}));
+      if(err) TE(err.message);
+
+      return technology;
+}
+module.exports.updateTechnology = updateTechnology;

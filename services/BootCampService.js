@@ -48,3 +48,21 @@ const deleteBootCamp = async function(bootCampInfo){
     return bootCamp;
 }
 module.exports.deleteBootCamp = deleteBootCamp;
+
+
+const updateBootcamp = async function(bootcampInfo, bootcampId) {
+    let bootcamp, err;
+
+    if(bootcampInfo.title && !validator.isLength(bootcampInfo.title, {min: 3, max: 50})) TE("A valid title was not entered.");
+    if(bootcampInfo.category && !validator.isLength(bootcampInfo.category, {min: 3, max: 50})) TE("A valid bootcamp category was not entered.");
+    if(bootcampInfo.description && !validator.isLength(bootcampInfo.description, {min: 3, max: 280})) TE("A valid bootcamp description was not entered");
+
+    
+      const updatedBootcamp = { ...bootcampInfo };
+  
+      [err, bootcamp] = await to(Bootcamp.findOneAndUpdate({_id:bootcampId}, updatedBootcamp, {new:true}));
+      if(err) TE(err.message);
+
+      return bootcamp;
+}
+module.exports.updateBootcamp = updateBootcamp;

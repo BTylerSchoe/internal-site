@@ -1,6 +1,7 @@
 const express 			= require('express');
 const router 			= express.Router();
 
+// link Controllers
 const UserController 	= require('./../controllers/UserController');
 const CompanyController = require('./../controllers/CompanyController');
 const HomeController 	= require('./../controllers/HomeController');
@@ -12,7 +13,6 @@ const MemberController = require('./../controllers/MemberController');
 
 
 const custom 	        = require('./../middleware/custom');
-
 const passport      	= require('passport');
 const path              = require('path');
 

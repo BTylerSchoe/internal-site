@@ -21,7 +21,13 @@ let MemberSchema = mongoose.Schema({
     password: {type: String, required: true, max: 25},
     account_type: {type: String, enum: enumAccountType, required: true},
 
-  }, {timestamps: true});
+  }, {
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true },
+    timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
+    strict: true,
+    timestamps: true
+  });
 
 
 // virtual field for full name 
@@ -42,7 +48,7 @@ MemberSchema.virtual('full_name').get(function () { //now you can treat as if th
 MemberSchema.virtual('projects', {
   ref: 'Project',
   localField: '_id',
-  foreignField: 'members.member',
+  foreignField: 'member',
   justOne: false,
 });
 

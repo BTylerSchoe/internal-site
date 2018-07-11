@@ -138,3 +138,21 @@ const deleteMember = async function(memberInfo){
     return member;
 }
 module.exports.deleteMember = deleteMember;
+
+const updateMember = async function(memberInfo, memberId) {
+    let member, err;
+
+    if(memberInfo.title && !validator.isLength(memberInfo.title, {min: 3, max: 50})) TE("A valid title was not entered.");
+    if(memberInfo.description && !validator.isLength(memberInfo.description, {min: 3, max: 280})) TE("A valid description was not entered.");
+    if(memberInfo.url && !validator.isURL(memberInfo.url)) TE("A valid url was not entered.");
+    if(memberInfo.tags && memberInfo.tags.length === 0) TE("You must have at least one tag.");
+
+    
+      const updatedMember = { ...memberInfo };
+  
+      [err, member] = await to(Member.findOneAndUpdate({_id:memberId}, updatedMember, {new:true}));
+      if(err) TE(err.message);
+
+      return member;
+}
+module.exports.updateMember = updateMember;

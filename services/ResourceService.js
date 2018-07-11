@@ -42,3 +42,24 @@ const deleteResource = async function(resourceInfo){
     return resource;
 }
 module.exports.deleteResource = deleteResource;
+
+
+
+const updateResource = async function(resourceInfo, resourceId) {
+    let resource, err;
+
+    if(resourceInfo.title && !validator.isLength(resourceInfo.title, {min: 3, max: 50})) TE("A valid title was not entered.");
+    if(resourceInfo.description && !validator.isLength(resourceInfo.description, {min: 3, max: 280})) TE("A valid description was not entered.");
+    if(resourceInfo.url && !validator.isURL(resourceInfo.url)) TE("A valid url was not entered.");
+    if(resourceInfo.tags && resourceInfo.tags.length === 0) TE("You must have at least one tag.");
+
+    
+      const updatedResource = { ...resourceInfo };
+  
+      [err, resource] = await to(Resource.findOneAndUpdate({_id:resourceId}, updatedResource, {new:true}));
+      if(err) TE(err.message);
+
+      return resource;
+}
+module.exports.updateResource = updateResource;
+

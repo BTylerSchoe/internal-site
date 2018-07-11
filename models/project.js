@@ -1,8 +1,7 @@
 const jwt           	= require('jsonwebtoken');
-const validate          = require('mongoose-validator');
-const mongoose            = require('mongoose');
-const member              = require('./../models/member');
-//const technology = require('./../models/Technology');
+const validate        = require('mongoose-validator');
+const mongoose        = require('mongoose');
+const member          = require('./../models/member');
 
 
 let ProjectSchema = mongoose.Schema(
@@ -10,7 +9,7 @@ let ProjectSchema = mongoose.Schema(
     title: {type: String, unique: true, required: true},
     category: {type: String, required: true},
     description: {type: String, require: true},
-    member: {type: mongoose.Schema.ObjectId, ref: 'Member'},
+    member: [ {type : mongoose.Schema.ObjectId, ref : 'Member'}],
     technology: {type: mongoose.Schema.ObjectId, ref: 'Technology'},
     tags: [{ type: String, required: false, index: true }],
     start_date: {type: Date,},
@@ -49,7 +48,7 @@ ProjectSchema.methods.toWeb = function(){
 };
 
 //Export Model
-let Project = (module.exports = mongoose.model('Projects', ProjectSchema));
+let Project = (module.exports = mongoose.model('Project', ProjectSchema));
 
 
 
