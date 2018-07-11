@@ -22,26 +22,26 @@ module.exports.create = create;
 
 // Find a single project with a projectId
     const get = async function(req, res){
-    Project.findById(req.params.projectId)
-    .then(project => {
-        if(!project) {
-            return ReE(res, {
-                message: "project not found with id " + req.params.projectId
-            });            
-        }
-        return ReS(res, {project:project.toWeb()});
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return ReE(res, {
-                message: "project not found with id " + req.params.projectId
-            });                
-        }
-        return ReE(res, {
-            message: "Error retrieving project with id " + req.params.projectId
-        });
-    });
-};
-module.exports.get = get;
+
+        let err, project;
+
+        [err, project] = await to(Project.findOne({_id: req.params.projectId}));
+
+        if (err) return ReE(res, err.message, 422);
+        if (project) {
+            return ReS(
+                res,
+                {
+                  message: "Successfully retrieved project.",
+                  project: project.toWeb()
+                },
+                201
+              );
+            }
+          };
+        
+        module.exports.get = get;
+
 
 const getAll = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
@@ -56,44 +56,29 @@ const getAll = async function(req, res){
     };
     module.exports.getAll = getAll;
 
-// Update a project identified by the projectId in the request
-const update = async function(req, res){
-    // Validate Request
-    if(!req.body) {
-        return res.status(400).send({
-            message: "project body can not be empty"
-        });
-    }
 
-    // Find project and update it with the request body
-    Project.findByIdAndUpdate(req.params.projectId, {
-        title: req.body.title || "Untitled Project",
-        category: req.body.category,
-        description: req.body.description,
-        member: req.body.member,
-        technology: req.body.technology,
-        tags: req.body.tags,
-        start_date: req.body.start_date,
-        end_date: req.body.end_date
-    }, {new: true})
-    .then(project => {
-        if(!project) {
-            return res.status(404).send({
-                message: "Project not found with id " + req.params.projectId
-            });
-        }
-        return ReS(res,{project:project.toWeb()});
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "Project not found with id " + req.params.projectId
-            });                
-        }
-        return res.status(500).send({
-            message: "Error updating project with id " + req.params.projectId
-        });
-    });
-};
+
+   // Update a project identified by the projectId in the request
+const update = async function(req, res){
+    res.setHeader("Content-Type", "application/json");
+    const Id = req.params.projectId;
+    const body = req.body;
+    let err, project;
+    
+
+    [err, project] = await to(projectService.updateProject(body, Id));
+
+
+    if (err) return ReE(res, err, 422);
+    return ReS(
+      res,
+      {
+        message: "Successfully updated project.",
+        project: project.toWeb()
+      },
+      201
+    );
+  };
 module.exports.update = update;
 
 
@@ -112,17 +97,4 @@ const remove = async function(req, res){
 
 
 
-
-
-
-// // Find a single project with a projectId
-// const get = async function(req, res){
-    
-//     Project.findById(req.params.projectId)
-//     [err, project] = await to(ProjectService.deleteProject(body));
-//     if(err) return ReE(res, 'error occured trying to delete the project');
-
-//     }
-// };
-// module.exports.get = get;
 

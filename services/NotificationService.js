@@ -42,3 +42,22 @@ const deleteNotification = async function(notificationInfo){
     return notification;
 }
 module.exports.deleteNotification = deleteNotification;
+
+
+const updateNotification = async function(notificationInfo, notificationId) {
+    let notification, err;
+
+    if(notificationInfo.title && !validator.isLength(notificationInfo.title, {min: 3, max: 50})) TE("A valid title was not entered.");
+    if(notificationInfo.description && !validator.isLength(notificationInfo.description, {min: 3, max: 280})) TE("A valid description was not entered.");
+    if(notificationInfo.url && !validator.isURL(notificationInfo.url)) TE("A valid url was not entered.");
+    if(notificationInfo.tags && notificationInfo.tags.length === 0) TE("You must have at least one tag.");
+
+    
+      const updatedNotification = { ...notificationInfo };
+  
+      [err, notification] = await to(Notification.findOneAndUpdate({_id:notificationId}, updatedNotification, {new:true}));
+      if(err) TE(err.message);
+
+      return notification;
+}
+module.exports.updateNotification = updateNotification;
