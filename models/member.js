@@ -7,7 +7,7 @@ const Project        = require('./project');
 
 
 
-const enumAccountType = ['a', 'r', 'i'];
+const enumAccountType = ['a', 'c', 'i', 'd'];
 
 let MemberSchema = mongoose.Schema({
     first_name: {type: String, required: true, max: 25},
@@ -20,7 +20,7 @@ let MemberSchema = mongoose.Schema({
 },
     password: {type: String, required: true, max: 25},
     account_type: {type: String, enum: enumAccountType, required: true},
-
+    project: [ {project:{type : mongoose.Schema.ObjectId, ref : 'Project'}, permissions:[{type:String}]} ],
   }, {timestamps: true});
 
 

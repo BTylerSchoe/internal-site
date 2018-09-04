@@ -7,7 +7,7 @@ const validate          = require('mongoose-validator');
 let BootCampSchema = mongoose.Schema({
     title: { type: String, required: false, index: true},
     category: {type: String, required: true},
-    descriptioin: { type: String, required: false},
+    description: { type: String, required: false},
     image_location: { type: String, required: true},
     url: {type: String, required: true}
 },

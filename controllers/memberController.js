@@ -25,7 +25,7 @@ const create = async function(req, res) {
 // Find a single member with a memberId
 const get = async function(req, res){
 
-    let err, member;
+    let err, member, projects;
   
     [err, member] = await to(Member.findOne({_id: req.params.memberId}));
   
@@ -36,6 +36,7 @@ const get = async function(req, res){
             {
               message: "Successfully retrieved member.",
               member: member.toWeb()
+              
             },
             201
           );
@@ -49,12 +50,13 @@ const get = async function(req, res){
         res.setHeader('Content-Type', 'application/json');
         let member = req.member;
         let err, members;
-        [err, members] = await to(Member.find());
+        [err, members] = await to(Member.find().populate('project'));
     
         return ReS(res, {
             message: "Successfully retrieved members.",
             members
           });
+          console.log(Members);
         };
         module.exports.getAll = getAll;
 

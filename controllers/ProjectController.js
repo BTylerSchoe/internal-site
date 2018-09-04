@@ -43,11 +43,35 @@ module.exports.create = create;
         module.exports.get = get;
 
 
+        const getMembersByProject = async function(req, res){
+
+          let err, project;
+          let members = []
+  
+          [err, project] = await to(Project.findOne({_id: req.params.projectId}));
+  
+
+          if (err) return ReE(res, err.message, 422);
+          if (project) {
+              return ReS(
+                  res,
+                  {
+                    message: "Successfully retrieved project.",
+                    project: project.Members()
+                  },
+                  201
+                );
+              }
+            };
+          
+          module.exports.getMembersByProject = getMembersByProject;
+
+
 const getAll = async function(req, res){
     res.setHeader('Content-Type', 'application/json');
     let member = req.member;
     let err, projects;
-    [err, projects] = await to(Project.find());
+    [err, projects] = await to(Project.find().populate('member').populate('technology'));
 
     return ReS(res, {
         message: "Successfully retrieved projects.",
